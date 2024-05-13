@@ -87,8 +87,36 @@ AF.TDLLswh = [Lswh;AF.TDLLswh(1:end-1,1)];
 ep = Micwh - AF.gTD'*AF.TDLLswh;
 
 if UpdateFC == 1
-
-AF.gTD = AF.gTD + (AF.mu/(norm(AF.TDLLswh)^2+delta))*AF.TDLLswh.*ep;
+    if sel == 0
+        %%IPNLMS-l1
+        aa = 0;
+        kd = (1 - aa) / (2 * length(AF.gTD)) + (1 + aa) * abs(AF.gTD) / (delta + 2 * sum(abs(AF.gTD)));
+        Kd = diag(kd);
+        AF.gTD = AF.gTD + (AF.mu / (AF.TDLLswh' * Kd * AF.TDLLswh + delta * (1 - aa) / (2 * length(AF.gTD)))) * Kd * AF.TDLLswh .* ep;
+    
+    elseif sel == 1
+        %%IPNLMS-l0
+        aa = 0;
+        kd = (1 - aa) / (2 * length(AF.gTD)) + (1 + aa) * (1 - exp(-beta * abs(AF.gTD))) / (delta + 2 * sum(1 - exp(-beta * abs(AF.gTD))));
+        Kd = diag(kd);
+        AF.gTD = AF.gTD + (AF.mu / (AF.TDLLswh' * Kd * AF.TDLLswh + delta * (1 - aa) / (2 * length(AF.gTD)))) * Kd * AF.TDLLswh .* ep;
+ 
+    elseif sel == 2
+        %%PNLMS 
+        aa = 1-delta;
+        rho = 5 / length(AF.gTD);
+        zeta = 0.01;
+        lambda1= max ( zeta, abs(AF.gTD));
+        lambda = max ( rho * lambda1, abs(AF.gTD));
+        kd = lambda/(sum(lambda));
+        Kd = diag(kd);
+        AF.gTD = AF.gTD + (AF.mu / (AF.TDLLswh' * Kd * AF.TDLLswh + delta * (1 - aa) / (2 * length(AF.gTD)))) * Kd * AF.TDLLswh .* ep;
+    
+    elseif sel ==3
+        %%NLMS
+        AF.gTD = AF.gTD + (AF.mu / (norm(AF.TDLLswh)^2 + delta)) * AF.TDLLswh .* ep;
+    end
+end
 
 % Remove DC
 AF.gTD = AF.gTD - mean(AF.gTD);
