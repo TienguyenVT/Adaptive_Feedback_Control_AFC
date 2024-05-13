@@ -179,7 +179,7 @@ for k = 2:N
       %Feedback cancellation
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    [e_delay(k+d_k),AF,AR] = PemAFC_Modified(m(k),y_delayfb(k),AF,AR,1);  
+    [e_delay(k+d_k),AF,AR] = PemAFC_Modified(m(k),y_delayfb(k),AF,AR,1,3);  
 
   
  %  Misalignment of the PEM-AFC
