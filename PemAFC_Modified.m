@@ -106,7 +106,7 @@ if UpdateFC == 1
         aa = 1-delta;
         rho = 5 / length(AF.gTD);
         zeta = 0.01;
-        lambda1= max ( zeta, abs(AF.gTD));
+        lambda1 = max ( zeta, abs(AF.gTD));
         lambda = max ( rho * lambda1, abs(AF.gTD));
         kd = lambda/(sum(lambda));
         Kd = diag(kd);
